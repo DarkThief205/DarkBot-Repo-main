@@ -59,20 +59,33 @@ else
     
     echo "[python] Python: $($PYTHON_CMD --version 2>&1 || echo 'not found')"
     
-    # Create and activate virtual environment
-    if [ ! -d venv ]; then
-        echo "[python] Creating virtual environment…"
-        $PYTHON_CMD -m venv venv
-    fi
-    
-    echo "[python] Activating virtual environment…"
-    source venv/bin/activate
+    # Try to create virtual environment, fallback to system pip if it fails
+        USING_VENV=false
+        if [ -d venv ] && [ -f venv/bin/activate ]; then
+            echo "[python] Activating existing virtual environment…"
+            source venv/bin/activate
+            USING_VENV=true
+        else
+            # Remove corrupted venv if it exists
+            [ -d venv ] && rm -rf venv
+        
+            echo "[python] Creating virtual environment…"
+            if $PYTHON_CMD -m venv venv 2>/dev/null && [ -f venv/bin/activate ]; then
+                echo "[python] Virtual environment created ✓"
+                source venv/bin/activate
+                USING_VENV=true
+            else
+                echo "[python] venv creation failed, using system Python instead…"
+                USING_VENV=false
+            fi
+        fi
     
     # Install Python requirements
     if [ -f requirements.txt ]; then
         echo "[python] installing Python dependencies…"
-        $PYTHON_CMD -m pip install --upgrade pip setuptools wheel -q 2>/dev/null || true
-        $PYTHON_CMD -m pip install -r requirements.txt -q 2>/dev/null || true
+        $PYTHON_CMD -m pip install --upgrade pip -q 2>/dev/null || true
+        $PYTHON_CMD -m pip install -r requirements.txt -q 2>/dev/null || echo "[python] WARNING: Some packages may not have installed"
+        echo "[python] Python dependencies installed ✓"
     fi
     
     # Load .env file
