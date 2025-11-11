@@ -1,0 +1,12 @@
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ],
+    "terminal.integrated.env.windows": {
+        "PATH": "C:\\Users\\ivopi\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python312\\Scripts;${env:PATH}"
+    },
+    "CodeGPT.apiKey": "CodeGPT Plus Beta"
+}
+
